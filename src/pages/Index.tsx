@@ -1,12 +1,17 @@
-
 import React from "react";
 import Header from "../components/Header";
 import Feed from "../components/Feed";
 import LoginForm from "../components/LoginForm";
 import { useAuth } from "../contexts/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const Index: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentUser } = useAuth();
+
+  // If user is an advertiser, redirect to advertiser dashboard
+  if (isAuthenticated && currentUser?.is_advertiser) {
+    return <Navigate to="/advertiser" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

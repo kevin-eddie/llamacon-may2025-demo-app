@@ -43,7 +43,8 @@ const Feed: React.FC = () => {
   useEffect(() => {
     const generateAd = async () => {
       try {
-        const imageUrl = await generateAdvertisementImage();
+        // Pass the current user if they are an advertiser
+        const imageUrl = await generateAdvertisementImage(currentUser?.is_advertiser ? currentUser : undefined);
         setAdImageUrl(imageUrl);
       } catch (error) {
         console.error('Failed to generate advertisement:', error);
@@ -53,7 +54,7 @@ const Feed: React.FC = () => {
     };
 
     generateAd();
-  }, []);
+  }, [currentUser]); // Re-generate ad when user changes
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

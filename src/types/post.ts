@@ -30,4 +30,12 @@ export interface User {
   followers_count?: number;
   following_count?: number;
   posts_count?: number;
+  is_advertiser?: boolean;
+  business_type?: string;
+  business_description?: string;
+  target_audience?: {
+    age_range?: string;
+    interests?: string[];
+    demographics?: string[];
+  };
 }

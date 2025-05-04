@@ -1,4 +1,3 @@
-
 import { Post, User } from "../types/post";
 
 export const users: User[] = [
@@ -51,6 +50,36 @@ export const users: User[] = [
     followers_count: 18700,
     following_count: 342,
     posts_count: 156
+  },
+  {
+    id: "advertiser1",
+    username: "eco_tech",
+    display_name: "EcoTech Solutions",
+    avatar_url: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9",
+    bio: "Sustainable Technology Solutions",
+    is_advertiser: true,
+    business_type: "Technology",
+    business_description: "Leading provider of eco-friendly technology solutions for businesses and homes",
+    target_audience: {
+      age_range: "25-45",
+      interests: ["sustainability", "technology", "environmental conservation"],
+      demographics: ["urban professionals", "environmentally conscious consumers"]
+    }
+  },
+  {
+    id: "advertiser2",
+    username: "green_living",
+    display_name: "Green Living Co.",
+    avatar_url: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8",
+    bio: "Sustainable Living Products",
+    is_advertiser: true,
+    business_type: "Retail",
+    business_description: "Your one-stop shop for sustainable living products and eco-friendly alternatives",
+    target_audience: {
+      age_range: "18-35",
+      interests: ["sustainable living", "zero waste", "eco-friendly products"],
+      demographics: ["environmentally conscious", "urban dwellers", "young professionals"]
+    }
   }
 ];
 
