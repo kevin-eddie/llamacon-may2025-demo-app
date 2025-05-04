@@ -10,19 +10,48 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const POSTS_PER_PAGE = 5;
 
 const Feed: React.FC = () => {
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
   
   const allPosts = getAllPosts();
   const userPosts = currentUser ? getPostsByUser(currentUser.id) : [];
   
   const displayPosts = activeTab === "all" ? allPosts : userPosts;
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(displayPosts.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const paginatedPosts = displayPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Reset to page 1 when changing tabs
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full mb-6">
+      <Tabs defaultValue="all" value={activeTab} onValueChange={handleTabChange} className="w-full mb-6">
         <div className="flex justify-center">
           <TabsList>
             <TabsTrigger value="all">All Posts</TabsTrigger>
@@ -40,8 +69,67 @@ const Feed: React.FC = () => {
       </Tabs>
       
       <div className="flex flex-col items-center">
-        {displayPosts.length > 0 ? (
-          displayPosts.map((post) => <Post key={post.post_id} post={post} />)
+        {paginatedPosts.length > 0 ? (
+          <>
+            {paginatedPosts.map((post) => <Post key={post.post_id} post={post} />)}
+            
+            {totalPages > 1 && (
+              <Pagination className="mt-6">
+                <PaginationContent>
+                  {currentPage > 1 && (
+                    <PaginationItem>
+                      <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} />
+                    </PaginationItem>
+                  )}
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(page => {
+                      // Show first page, last page, current page, and pages around current page
+                      return page === 1 || 
+                             page === totalPages || 
+                             (page >= currentPage - 1 && page <= currentPage + 1);
+                    })
+                    .map((page, index, array) => {
+                      // If there's a gap in the sequence, show ellipsis
+                      if (index > 0 && page > array[index - 1] + 1) {
+                        return (
+                          <React.Fragment key={`ellipsis-${page}`}>
+                            <PaginationItem>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                            <PaginationItem key={page}>
+                              <PaginationLink 
+                                isActive={page === currentPage}
+                                onClick={() => handlePageChange(page)}
+                              >
+                                {page}
+                              </PaginationLink>
+                            </PaginationItem>
+                          </React.Fragment>
+                        );
+                      }
+                      
+                      return (
+                        <PaginationItem key={page}>
+                          <PaginationLink 
+                            isActive={page === currentPage}
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+                  
+                  {currentPage < totalPages && (
+                    <PaginationItem>
+                      <PaginationNext onClick={() => handlePageChange(currentPage + 1)} />
+                    </PaginationItem>
+                  )}
+                </PaginationContent>
+              </Pagination>
+            )}
+          </>
         ) : (
           <div className="text-center py-10">
             <h3 className="text-xl font-semibold mb-2">No posts found</h3>

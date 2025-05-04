@@ -12,7 +12,13 @@ const Index: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <main className="pt-4 pb-10">
-        {isAuthenticated ? <Feed /> : <LoginForm />}
+        {isAuthenticated ? (
+          <div className="max-w-6xl mx-auto">
+            <Feed />
+          </div>
+        ) : (
+          <LoginForm />
+        )}
       </main>
     </div>
   );
