@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Post from "./Post";
 import { useAuth } from "../contexts/AuthContext";
 import { getAllPosts, getPostsByUser } from "../data/mockData";
@@ -19,6 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { generateAdvertisementImage } from "../lib/imageGenerator";
 
 const POSTS_PER_PAGE = 5;
 
@@ -26,6 +26,8 @@ const Feed: React.FC = () => {
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [adImageUrl, setAdImageUrl] = useState<string | null>(null);
+  const [isLoadingAd, setIsLoadingAd] = useState(true);
   
   const allPosts = getAllPosts();
   const userPosts = currentUser ? getPostsByUser(currentUser.id) : [];
@@ -37,6 +39,21 @@ const Feed: React.FC = () => {
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const paginatedPosts = displayPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
   
+  useEffect(() => {
+    const generateAd = async () => {
+      try {
+        const imageUrl = await generateAdvertisementImage();
+        setAdImageUrl(imageUrl);
+      } catch (error) {
+        console.error('Failed to generate advertisement:', error);
+      } finally {
+        setIsLoadingAd(false);
+      }
+    };
+
+    generateAd();
+  }, []);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     // Scroll to top when changing pages
@@ -129,6 +146,26 @@ const Feed: React.FC = () => {
                 </PaginationContent>
               </Pagination>
             )}
+
+            {/* Advertisement Section */}
+            <div className="w-full max-w-2xl mt-8 p-4 bg-white rounded-lg shadow-sm">
+              <h3 className="text-lg font-semibold mb-4">Sponsored Content</h3>
+              {isLoadingAd ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                </div>
+              ) : adImageUrl ? (
+                <img 
+                  src={adImageUrl} 
+                  alt="Personalized Advertisement" 
+                  className="w-full h-auto rounded-lg"
+                />
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  Failed to load advertisement
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <div className="text-center py-10">

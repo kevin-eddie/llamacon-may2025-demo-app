@@ -18,7 +18,7 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 w-full bg-white border-b border-gray-200 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="text-2xl font-bold">SocialFeed</div>
+        <div className="text-2xl font-bold">Facemash</div>
         
         {currentUser ? (
           <div className="flex items-center gap-4">
