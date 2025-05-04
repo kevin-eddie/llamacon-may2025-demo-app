@@ -18,8 +18,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { generateAdvertisementImage } from "../lib/imageGenerator";
 import { Post as PostType } from "../types/post";
+import { getAllAdvertisements } from "../data/advertisements";
 
 const POSTS_PER_PAGE = 5;
 
@@ -27,8 +27,8 @@ const Feed: React.FC = () => {
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [adImageUrl, setAdImageUrl] = useState<string | null>(null);
-  const [isLoadingAd, setIsLoadingAd] = useState(true);
+  const [advertisements, setAdvertisements] = useState<any[]>([]);
+  const [isLoadingAds, setIsLoadingAds] = useState(true);
   
   const allPosts = getAllPosts();
   const userPosts = currentUser ? getPostsByUser(currentUser.id) : [];
@@ -41,20 +41,20 @@ const Feed: React.FC = () => {
   const paginatedPosts = displayPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
   
   useEffect(() => {
-    const generateAd = async () => {
+    const fetchAdvertisements = () => {
       try {
-        // Pass the current user if they are an advertiser
-        const imageUrl = await generateAdvertisementImage(currentUser?.is_advertiser ? currentUser : undefined);
-        setAdImageUrl(imageUrl);
+        // Get all available advertisements
+        const ads = getAllAdvertisements();
+        setAdvertisements(ads);
       } catch (error) {
-        console.error('Failed to generate advertisement:', error);
+        console.error('Failed to fetch advertisements:', error);
       } finally {
-        setIsLoadingAd(false);
+        setIsLoadingAds(false);
       }
     };
 
-    generateAd();
-  }, [currentUser]); // Re-generate ad when user changes
+    fetchAdvertisements();
+  }, []);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -68,29 +68,37 @@ const Feed: React.FC = () => {
     setCurrentPage(1);
   };
 
-  // Create a post object for the advertisement
-  const adPost: PostType = {
-    post_id: 'ad-' + currentPage,
-    date_posted: new Date().toISOString(),
-    image_url: adImageUrl || '',
-    caption: 'Personalized advertisement based on your interests',
-    likes: 0,
-    saves: 0,
-    hashtags: [],
-    tagged_users: [],
-    user: {
-      id: 'system',
-      username: 'Sponsored',
-      display_name: 'Sponsored Content',
-      avatar_url: '',
-    },
-    is_ad: true,
-    comments: []
+  // Create post objects for advertisements
+  const createAdPost = (ad: any): PostType => {
+    return {
+      post_id: ad.id,
+      date_posted: ad.date_created,
+      image_url: ad.image_url,
+      caption: ad.product_details?.description || 'Personalized advertisement',
+      likes: 0,
+      saves: 0,
+      hashtags: [],
+      tagged_users: [],
+      user: {
+        id: ad.advertiser.id,
+        username: ad.advertiser.username,
+        display_name: ad.advertiser.display_name,
+        avatar_url: ad.advertiser.avatar_url || '',
+      },
+      is_ad: true,
+      comments: []
+    };
   };
 
-  // Add the ad post to the end of the current page's posts
+  // Add an advertisement to the current page's posts
   const postsWithAd = [...paginatedPosts];
-  if (adImageUrl && !isLoadingAd) {
+  
+  // If we have advertisements, add one to the current page
+  if (advertisements.length > 0 && !isLoadingAds) {
+    // Select an ad based on the current page (rotating through available ads)
+    const adIndex = (currentPage - 1) % advertisements.length;
+    const selectedAd = advertisements[adIndex];
+    const adPost = createAdPost(selectedAd);
     postsWithAd.push(adPost);
   }
 

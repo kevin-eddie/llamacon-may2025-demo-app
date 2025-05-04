@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { generateAdvertisementImage } from "../lib/imageGenerator";
 import { useToast } from "@/components/ui/use-toast";
+import { getAdvertisementsByAdvertiser, Advertisement } from "../data/advertisements";
+import { formatDistanceToNow } from "date-fns";
 
 const AdvertiserDashboard: React.FC = () => {
   const { currentUser, isAuthenticated } = useAuth();
@@ -23,6 +25,23 @@ const AdvertiserDashboard: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
+
+  // Fetch advertisements when the component mounts
+  useEffect(() => {
+    if (currentUser?.id) {
+      const ads = getAdvertisementsByAdvertiser(currentUser.id);
+      setAdvertisements(ads);
+    }
+  }, [currentUser?.id]);
+
+  // Refresh advertisements after generating a new one
+  const refreshAdvertisements = () => {
+    if (currentUser?.id) {
+      const ads = getAdvertisementsByAdvertiser(currentUser.id);
+      setAdvertisements(ads);
+    }
+  };
 
   // Redirect if not an advertiser
   if (!isAuthenticated || !currentUser?.is_advertiser) {
@@ -57,6 +76,9 @@ const AdvertiserDashboard: React.FC = () => {
         title: "Success!",
         description: "Your advertisement has been generated and saved.",
       });
+      
+      // Refresh advertisements list after generating a new one
+      refreshAdvertisements();
     } catch (error) {
       console.error("Error generating advertisement:", error);
       setError(error instanceof Error ? error.message : "Failed to generate advertisement. Please try again.");
@@ -68,6 +90,11 @@ const AdvertiserDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Format the date for display
+  const formatDate = (dateString: string) => {
+    return formatDistanceToNow(new Date(dateString), { addSuffix: true });
   };
 
   return (
@@ -82,7 +109,7 @@ const AdvertiserDashboard: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 mb-8">
             <Card>
               <CardHeader>
                 <CardTitle>Business Profile</CardTitle>
@@ -202,6 +229,44 @@ const AdvertiserDashboard: React.FC = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Advertisement Gallery Section */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Your Advertisement Gallery</CardTitle>
+              <CardDescription>All advertisements you've created</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {advertisements.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground mb-4">You haven't created any advertisements yet.</p>
+                  <Button onClick={handleGenerateClick}>Create Your First Ad</Button>
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {advertisements.map((ad) => (
+                    <Card key={ad.id} className="overflow-hidden border">
+                      <div className="aspect-square relative">
+                        <img 
+                          src={ad.image_url} 
+                          alt={ad.product_details?.name || "Advertisement"} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold mb-1">{ad.product_details?.name}</h3>
+                        <p className="text-sm line-clamp-2 mb-2">{ad.product_details?.description}</p>
+                        <div className="flex justify-between items-center text-xs text-muted-foreground">
+                          <span>Created {formatDate(ad.date_created)}</span>
+                          <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">Active</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

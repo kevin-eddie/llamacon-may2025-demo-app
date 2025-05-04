@@ -57,10 +57,10 @@ export async function generateAdvertisementImage(
       advertiser,
       image_url: imageUrl,
       date_created: new Date().toISOString(),
-      target_audience: advertiser.target_audience || {
-        age_range: "",
-        interests: [],
-        demographics: []
+      target_audience: {
+        age_range: advertiser.target_audience?.age_range || "",
+        interests: advertiser.target_audience?.interests || [],
+        demographics: advertiser.target_audience?.demographics || []
       },
       business_type: advertiser.business_type || "",
       business_description: advertiser.business_description || "",

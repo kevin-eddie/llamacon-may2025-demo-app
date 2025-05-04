@@ -45,10 +45,16 @@ const Post: React.FC<PostProps> = ({ post, isAd }) => {
       <Card className="w-full max-w-xl mb-6 shadow-md border-2 border-blue-100">
         <CardHeader className="p-4 flex flex-row items-center space-y-0 gap-3 border-b">
           <Avatar>
-            <AvatarFallback className="bg-blue-100 text-blue-600">SP</AvatarFallback>
+            <AvatarImage src={post.user.avatar_url} />
+            <AvatarFallback className="bg-blue-100 text-blue-600">
+              {post.user.display_name.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <div className="font-semibold text-sm text-blue-600">Sponsored</div>
+            <div className="font-semibold text-sm text-blue-600">
+              {post.user.display_name}
+              <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">Sponsored</span>
+            </div>
             <div className="text-xs text-muted-foreground">Advertisement</div>
           </div>
         </CardHeader>
@@ -60,8 +66,9 @@ const Post: React.FC<PostProps> = ({ post, isAd }) => {
           />
         </div>
         <CardContent className="p-4">
+          <div className="mb-2 font-semibold">{post.caption}</div>
           <div className="text-sm text-muted-foreground">
-            Personalized advertisement based on your interests
+            {post.user.display_name} · {formatPostedTime(post.date_posted)}
           </div>
         </CardContent>
       </Card>
