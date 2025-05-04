@@ -4,6 +4,16 @@
 
 **URL**: https://lovable.dev/projects/75be718c-6266-48da-aa54-b99c95079311
 
+## Features
+
+### AI-Powered Advertisement Generation
+
+This application uses state-of-the-art AI to create personalized advertisements:
+
+1. **Llama 4 (by Groq) Prompt Enhancement** - Refines advertisement prompts to be more detailed and effective
+2. **DALL·E 3 Image Generation** - Creates high-quality advertising images based on enhanced prompts
+3. **User-Targeted Personalization** - Customizes advertisements based on user demographics and interests
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
@@ -59,6 +69,8 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- OpenAI API (DALL·E 3)
+- Groq API (Llama 4)
 
 ## How can I deploy this project?
 

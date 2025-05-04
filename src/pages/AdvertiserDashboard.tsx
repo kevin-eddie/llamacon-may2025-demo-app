@@ -210,6 +210,15 @@ const AdvertiserDashboard: React.FC = () => {
                           Cancel
                         </Button>
                       </div>
+                      <div className="bg-slate-50 p-3 rounded-md border border-slate-100 mt-2">
+                        <div className="flex items-center gap-2 text-sm text-slate-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+                            <path d="M14 12a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2a2 2 0 0 1 2 2Z"></path>
+                            <path d="M10.4 5.9a2 2 0 0 1 3.2 0l7.7 12.8a2 2 0 0 1-1.6 3.1H4.2a2 2 0 0 1-1.6-3.1Z"></path>
+                          </svg>
+                          Your prompt will be enhanced by <span className="font-semibold">Llama 4</span> to create better advertisement images
+                        </div>
+                      </div>
                     </form>
                   )}
 

@@ -1,6 +1,7 @@
 import { User } from "../types/post";
 import { addAdvertisement, Advertisement, ProductDetails } from "../data/advertisements";
 import OpenAI from 'openai';
+import { enhancePromptWithLlama4 } from "./promptEnhancer";
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -15,29 +16,15 @@ export async function generateAdvertisementImage(
     throw new Error("Advertiser and product details are required");
   }
 
-  // Create a personalized prompt based on the advertiser's business information and product details
-  const prompt = `Create a professional advertisement image for ${advertiser.business_type} business "${advertiser.display_name}".
-    
-    Product Information:
-    - Name: ${productDetails.name}
-    - Description: ${productDetails.description}
-    - Key Features: ${productDetails.features}
-    - Specific Target Audience: ${productDetails.targetAudience}
-    
-    Business Context:
-    - Type: ${advertiser.business_type}
-    - Description: ${advertiser.business_description}
-    - General Target Audience: ${advertiser.target_audience?.age_range} years old, interested in ${advertiser.target_audience?.interests?.join(", ")}, 
-    targeting ${advertiser.target_audience?.demographics?.join(", ")}
-    
-    The image should be modern, professional, and appeal to the target audience's interests and demographics.
-    Focus on showcasing the product's key features while maintaining the brand's identity.`;
-
   try {
-    // Use OpenAI SDK to generate image
+    // Use Llama 4 to enhance the prompt
+    const enhancedPrompt = await enhancePromptWithLlama4(advertiser, productDetails);
+    console.log('Using enhanced prompt for image generation:', enhancedPrompt);
+
+    // Use OpenAI SDK to generate image with the enhanced prompt
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt: prompt,
+      prompt: enhancedPrompt,
       n: 1,
       size: "1024x1024",
     });
