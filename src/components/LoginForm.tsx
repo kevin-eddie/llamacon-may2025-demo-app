@@ -44,7 +44,7 @@ const LoginForm: React.FC = () => {
     <div className="max-w-md mx-auto px-4">
       <Card>
         <CardHeader>
-          <CardTitle>Welcome to Trsh</CardTitle>
+          <CardTitle>Welcome to Facemash</CardTitle>
           <CardDescription>Enter your username to continue</CardDescription>
         </CardHeader>
         <CardContent>

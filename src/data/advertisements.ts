@@ -1,5 +1,12 @@
 import { User } from "../types/post";
 
+export interface ProductDetails {
+  name: string;
+  description: string;
+  features: string;
+  targetAudience: string;
+}
+
 export interface Advertisement {
   id: string;
   advertiser: User;
@@ -12,6 +19,7 @@ export interface Advertisement {
   };
   business_type: string;
   business_description: string;
+  product_details?: ProductDetails;
 }
 
 // Mock advertisements data
@@ -84,6 +92,16 @@ export const getAllAdvertisements = () => {
 
 // Function to add a new advertisement
 export const addAdvertisement = (advertisement: Advertisement) => {
-  advertisements.push(advertisement);
+  // Check if an advertisement with the same ID already exists
+  const existingIndex = advertisements.findIndex(ad => ad.id === advertisement.id);
+  
+  if (existingIndex !== -1) {
+    // Update existing advertisement
+    advertisements[existingIndex] = advertisement;
+  } else {
+    // Add new advertisement
+    advertisements.push(advertisement);
+  }
+  
   return advertisement;
 }; 
