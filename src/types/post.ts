@@ -1,4 +1,3 @@
-
 export interface Post {
   post_id: string;
   date_posted: string;
@@ -18,6 +17,8 @@ export interface Post {
   filter_used?: string;
   engagement_rate?: number;
   user: User;
+  is_ad?: boolean;
+  comments?: any[];
 }
 
 export interface User {

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Post as PostType } from "../types/post";
 import { formatDistanceToNow } from "date-fns";
@@ -10,9 +9,10 @@ import { cn } from "@/lib/utils";
 
 interface PostProps {
   post: PostType;
+  isAd?: boolean;
 }
 
-const Post: React.FC<PostProps> = ({ post }) => {
+const Post: React.FC<PostProps> = ({ post, isAd }) => {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes);
@@ -39,6 +39,34 @@ const Post: React.FC<PostProps> = ({ post }) => {
   const formatPostedTime = (dateString: string) => {
     return formatDistanceToNow(new Date(dateString), { addSuffix: true });
   };
+
+  if (isAd) {
+    return (
+      <Card className="w-full max-w-xl mb-6 shadow-md border-2 border-blue-100">
+        <CardHeader className="p-4 flex flex-row items-center space-y-0 gap-3 border-b">
+          <Avatar>
+            <AvatarFallback className="bg-blue-100 text-blue-600">SP</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <div className="font-semibold text-sm text-blue-600">Sponsored</div>
+            <div className="text-xs text-muted-foreground">Advertisement</div>
+          </div>
+        </CardHeader>
+        <div className="relative">
+          <img 
+            src={post.image_url} 
+            alt="Advertisement" 
+            className="w-full object-cover max-h-[600px]" 
+          />
+        </div>
+        <CardContent className="p-4">
+          <div className="text-sm text-muted-foreground">
+            Personalized advertisement based on your interests
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-xl mb-6 shadow-md">

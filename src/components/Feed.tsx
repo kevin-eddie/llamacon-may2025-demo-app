@@ -19,6 +19,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { generateAdvertisementImage } from "../lib/imageGenerator";
+import { Post as PostType } from "../types/post";
 
 const POSTS_PER_PAGE = 5;
 
@@ -66,6 +67,32 @@ const Feed: React.FC = () => {
     setCurrentPage(1);
   };
 
+  // Create a post object for the advertisement
+  const adPost: PostType = {
+    post_id: 'ad-' + currentPage,
+    date_posted: new Date().toISOString(),
+    image_url: adImageUrl || '',
+    caption: 'Personalized advertisement based on your interests',
+    likes: 0,
+    saves: 0,
+    hashtags: [],
+    tagged_users: [],
+    user: {
+      id: 'system',
+      username: 'Sponsored',
+      display_name: 'Sponsored Content',
+      avatar_url: '',
+    },
+    is_ad: true,
+    comments: []
+  };
+
+  // Add the ad post to the end of the current page's posts
+  const postsWithAd = [...paginatedPosts];
+  if (adImageUrl && !isLoadingAd) {
+    postsWithAd.push(adPost);
+  }
+
   return (
     <div className="container mx-auto py-6 px-4">
       <Tabs defaultValue="all" value={activeTab} onValueChange={handleTabChange} className="w-full mb-6">
@@ -86,9 +113,15 @@ const Feed: React.FC = () => {
       </Tabs>
       
       <div className="flex flex-col items-center">
-        {paginatedPosts.length > 0 ? (
+        {postsWithAd.length > 0 ? (
           <>
-            {paginatedPosts.map((post) => <Post key={post.post_id} post={post} />)}
+            {postsWithAd.map((post) => (
+              <Post 
+                key={post.post_id} 
+                post={post} 
+                isAd={post.is_ad}
+              />
+            ))}
             
             {totalPages > 1 && (
               <Pagination className="mt-6">
@@ -146,26 +179,6 @@ const Feed: React.FC = () => {
                 </PaginationContent>
               </Pagination>
             )}
-
-            {/* Advertisement Section */}
-            <div className="w-full max-w-2xl mt-8 p-4 bg-white rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">Sponsored Content</h3>
-              {isLoadingAd ? (
-                <div className="flex justify-center items-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-                </div>
-              ) : adImageUrl ? (
-                <img 
-                  src={adImageUrl} 
-                  alt="Personalized Advertisement" 
-                  className="w-full h-auto rounded-lg"
-                />
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  Failed to load advertisement
-                </div>
-              )}
-            </div>
           </>
         ) : (
           <div className="text-center py-10">
