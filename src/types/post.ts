@@ -19,6 +19,7 @@ export interface Post {
   user: User;
   is_ad?: boolean;
   comments?: any[];
+  isCustomizing?: boolean;
 }
 
 export interface User {
@@ -38,4 +39,8 @@ export interface User {
     interests?: string[];
     demographics?: string[];
   };
+  interests?: string[];
+  age_group?: string;
+  preferences?: string[];
+  demographics?: string[];
 }

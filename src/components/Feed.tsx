@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/pagination";
 import { Post as PostType } from "../types/post";
 import { getAllAdvertisements } from "../data/advertisements";
+import { customizeAdImageForUser } from "../lib/imageGenerator";
 
 const POSTS_PER_PAGE = 5;
 
@@ -29,6 +30,8 @@ const Feed: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [advertisements, setAdvertisements] = useState<any[]>([]);
   const [isLoadingAds, setIsLoadingAds] = useState(true);
+  const [customizedAdUrls, setCustomizedAdUrls] = useState<Record<string, string>>({});
+  const [isCustomizingAds, setIsCustomizingAds] = useState(false);
   
   const allPosts = getAllPosts();
   const userPosts = currentUser ? getPostsByUser(currentUser.id) : [];
@@ -56,6 +59,37 @@ const Feed: React.FC = () => {
     fetchAdvertisements();
   }, []);
 
+  // Customize ad image when advertisements load or current user changes
+  useEffect(() => {
+    if (advertisements.length > 0 && !isLoadingAds && currentUser) {
+      const customizeAds = async () => {
+        setIsCustomizingAds(true);
+        const customizedUrls: Record<string, string> = {};
+        
+        // Customize each ad for the current user
+        for (const ad of advertisements) {
+          try {
+            const customizedUrl = await customizeAdImageForUser(
+              ad.image_url,
+              ad,
+              currentUser
+            );
+            customizedUrls[ad.id] = customizedUrl;
+          } catch (error) {
+            console.error('Failed to customize ad:', error);
+            // Use original image if customization fails
+            customizedUrls[ad.id] = ad.image_url;
+          }
+        }
+        
+        setCustomizedAdUrls(customizedUrls);
+        setIsCustomizingAds(false);
+      };
+      
+      customizeAds();
+    }
+  }, [advertisements, isLoadingAds, currentUser]);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     // Scroll to top when changing pages
@@ -73,7 +107,8 @@ const Feed: React.FC = () => {
     return {
       post_id: ad.id,
       date_posted: ad.date_created,
-      image_url: ad.image_url,
+      // Use customized image URL if available, otherwise use original
+      image_url: customizedAdUrls[ad.id] || ad.image_url,
       caption: ad.product_details?.description || 'Personalized advertisement',
       likes: 0,
       saves: 0,
@@ -86,7 +121,9 @@ const Feed: React.FC = () => {
         avatar_url: ad.advertiser.avatar_url || '',
       },
       is_ad: true,
-      comments: []
+      comments: [],
+      // Pass loading state to the Post component
+      isCustomizing: isCustomizingAds && !customizedAdUrls[ad.id]
     };
   };
 

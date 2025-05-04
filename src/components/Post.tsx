@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Heart, Bookmark, MessageCircle, Share } from "lucide-react";
+import { Heart, Bookmark, MessageCircle, Share, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PostProps {
@@ -59,11 +59,23 @@ const Post: React.FC<PostProps> = ({ post, isAd }) => {
           </div>
         </CardHeader>
         <div className="relative">
-          <img 
-            src={post.image_url} 
-            alt="Advertisement" 
-            className="w-full object-cover max-h-[600px]" 
-          />
+          {post.isCustomizing ? (
+            <div className="w-full aspect-square flex flex-col items-center justify-center bg-gray-100">
+              <Loader2 className="h-8 w-8 text-blue-600 animate-spin mb-2" />
+              <p className="text-sm text-blue-600">Personalizing ad for you...</p>
+            </div>
+          ) : (
+            <>
+              <img 
+                src={post.image_url} 
+                alt="Advertisement" 
+                className="w-full object-cover max-h-[600px]" 
+              />
+              <div className="absolute bottom-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-md opacity-80">
+                Personalized for you
+              </div>
+            </>
+          )}
         </div>
         <CardContent className="p-4">
           <div className="mb-2 font-semibold">{post.caption}</div>

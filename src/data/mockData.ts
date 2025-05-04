@@ -9,7 +9,11 @@ export const users: User[] = [
     bio: "Travel enthusiast | Photographer | Adventure seeker",
     followers_count: 15230,
     following_count: 523,
-    posts_count: 247
+    posts_count: 247,
+    interests: ["travel", "photography", "hiking", "wildlife", "nature", "adventure"],
+    age_group: "25-34",
+    preferences: ["outdoor activities", "sustainable travel", "luxury experiences"],
+    demographics: ["urban professional", "frequent traveler", "high income"]
   },
   {
     id: "user2",
@@ -19,7 +23,11 @@ export const users: User[] = [
     bio: "Food critic | Recipe developer | Restaurant explorer",
     followers_count: 8750,
     following_count: 312,
-    posts_count: 189
+    posts_count: 189,
+    interests: ["cooking", "restaurants", "food photography", "culinary arts", "gourmet"],
+    age_group: "35-44",
+    preferences: ["fine dining", "exotic cuisine", "cooking gadgets", "organic ingredients"],
+    demographics: ["urban dweller", "food enthusiast", "middle income"]
   },
   {
     id: "user3",
@@ -29,7 +37,11 @@ export const users: User[] = [
     bio: "Tech enthusiast | Gadget reviewer | Software developer",
     followers_count: 22100,
     following_count: 245,
-    posts_count: 315
+    posts_count: 315,
+    interests: ["technology", "programming", "gadgets", "AI", "sustainability", "innovation"],
+    age_group: "18-24",
+    preferences: ["cutting-edge tech", "minimalist design", "eco-friendly products"],
+    demographics: ["tech professional", "early adopter", "high income"]
   },
   {
     id: "user4",
@@ -39,7 +51,11 @@ export const users: User[] = [
     bio: "Fitness coach | Nutrition expert | Marathon runner",
     followers_count: 32500,
     following_count: 478,
-    posts_count: 210
+    posts_count: 210,
+    interests: ["fitness", "nutrition", "running", "wellness", "health", "outdoor activities"],
+    age_group: "25-34",
+    preferences: ["fitness gear", "organic food", "wellness retreats", "athletic wear"],
+    demographics: ["health conscious", "active lifestyle", "middle income"]
   },
   {
     id: "user5",
@@ -49,7 +65,11 @@ export const users: User[] = [
     bio: "Visual artist | Designer | Painter | Illustrator",
     followers_count: 18700,
     following_count: 342,
-    posts_count: 156
+    posts_count: 156,
+    interests: ["art", "design", "painting", "illustration", "creativity", "modern art"],
+    age_group: "35-44",
+    preferences: ["art supplies", "exhibit visits", "creative workshops", "unique designs"],
+    demographics: ["creative professional", "artistic community", "middle income"]
   },
   {
     id: "advertiser1",
